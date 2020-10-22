@@ -47,7 +47,7 @@ local Pipeline(branch, platform, event) = {
 
   local pipeline = self,
 
-  publish(step_prefix='pkg', eventp=event):: {
+  publish(step_prefix='pkg', eventp=event + '/${DRONE_BUILD_NUMBER}'):: {
     name: 'publish ' + step_prefix,
     image: 'plugins/s3-sync',
     when: {
@@ -62,7 +62,7 @@ local Pipeline(branch, platform, event) = {
         from_secret: 'aws_secret_access_key',
       },
       source: 'result',
-      target: branch + '/' + eventp + '/${DRONE_BUILD_NUMBER}/' + std.strReplace(std.strReplace(platform, ':', ''), '/', '-'),
+      target: branch + '/' + eventp + '/' + std.strReplace(std.strReplace(platform, ':', ''), '/', '-'),
       delete: 'true',
     },
   },
@@ -334,7 +334,7 @@ local Pipeline(branch, platform, event) = {
          // (if (platform == 'centos:8' && event == 'cron') then [pipeline.dockerfile] + [pipeline.docker] + [pipeline.ecr] else []) +
          [pipeline.smoke] +
          [pipeline.smokelog] +
-         (if (pkg_format == 'rpm') then [pipeline.mtr] + [pipeline.mtrlog] + [pipeline.publish('mtr')] else []) +
+         [pipeline.mtr] + [pipeline.mtrlog] + [pipeline.publish('mtr')] +
          (if (event == 'cron') || (event == 'push') then [pipeline.publish('mtr latest', 'latest')] else []) +
          [pipeline.regression] +
          [pipeline.regressionlog] +
