@@ -431,6 +431,24 @@ public:
 };
 
 
+class ConvertFromStringParam
+{
+  const std::string& m_timeZone;
+  const bool m_noRoundup;
+  const bool m_isUpdate;
+public:
+  ConvertFromStringParam(const std::string& timeZone,
+                         bool noRoundup, bool isUpdate)
+   :m_timeZone(timeZone),
+    m_noRoundup(noRoundup),
+    m_isUpdate(isUpdate)
+  { }
+  const std::string& timeZone() const { return m_timeZone; }
+  bool noRoundup() const { return m_noRoundup; }
+  bool isUpdate() const { return m_isUpdate; }
+};
+
+
 class SimpleValue
 {
   int64_t  m_sint64;
@@ -859,6 +877,11 @@ public:
   }
   virtual boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                    const = 0;
+
+  virtual boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                                       const ConvertFromStringParam& prm,
+                                       const std::string& str,
+                                       bool& pushWarning) const = 0;
 };
 
 
@@ -917,6 +940,10 @@ class TypeHandlerBit: public TypeHandler
     //TODO: How to communicate with write engine?
     return boost::any();
   }
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -984,6 +1011,10 @@ public:
                             const char *str, round_style_t & rf) const override;
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1036,6 +1067,10 @@ public:
                             const char *str, round_style_t & rf) const override;
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1090,6 +1125,10 @@ class TypeHandlerSInt24: public TypeHandlerInt
                             const char *str, round_style_t & rf) const override;
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1144,6 +1183,10 @@ class TypeHandlerSInt32: public TypeHandlerInt
                             const char *str, round_style_t & rf) const override;
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1195,6 +1238,10 @@ class TypeHandlerSInt64: public TypeHandlerInt
                             const char *str, round_style_t & rf) const override;
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1273,6 +1320,10 @@ class TypeHandlerUInt8: public TypeHandlerInt
   }
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1350,6 +1401,10 @@ class TypeHandlerUInt16: public TypeHandlerInt
   }
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1430,6 +1485,10 @@ class TypeHandlerUInt24: public TypeHandlerInt
   }
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1510,6 +1569,10 @@ class TypeHandlerUInt32: public TypeHandlerInt
   }
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1587,6 +1650,10 @@ class TypeHandlerUInt64: public TypeHandlerInt
   }
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1723,6 +1790,10 @@ public:
   {
     return part.isSuitableSInt64(startVal, rfMin, endVal, rfMax);
   }
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1799,6 +1870,10 @@ public:
   {
     return part.isSuitableSInt64(startVal, rfMin, endVal, rfMax);
   }
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1877,6 +1952,10 @@ public:
   {
     return part.isSuitableSInt128(startVal, rfMin, endVal, rfMax);
   }
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -1951,6 +2030,10 @@ public:
   {
     return part.isSuitableSInt128(startVal, rfMin, endVal, rfMax);
   }
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2006,6 +2089,10 @@ class TypeHandlerSFloat: public TypeHandlerReal
   }
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2036,6 +2123,10 @@ class TypeHandlerSDouble: public TypeHandlerReal
   }
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2066,6 +2157,10 @@ class TypeHandlerUFloat: public TypeHandlerReal
   }
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2096,6 +2191,10 @@ class TypeHandlerUDouble: public TypeHandlerReal
   }
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2126,6 +2225,14 @@ class TypeHandlerSLongDouble: public TypeHandlerReal
                                                                 const override
   {
     // QQ: DDLPackageProcessor::getNullValueForType() did not handle LONGDOUBLE
+    return boost::any();
+  }
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override
+  {
+    throw logging::QueryDataExcept("convertColumnData: unknown column data type.", logging::dataTypeErr);
     return boost::any();
   }
 };
@@ -2174,6 +2281,10 @@ class TypeHandlerDate: public TypeHandlerTemporal
                             const char *str, round_style_t & rf) const override;
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2204,6 +2315,10 @@ class TypeHandlerDatetime: public TypeHandlerTemporal
                             const char *str, round_style_t & rf) const override;
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2234,6 +2349,10 @@ class TypeHandlerTime: public TypeHandlerTemporal
                             const char *str, round_style_t & rf) const override;
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2264,6 +2383,10 @@ class TypeHandlerTimestamp: public TypeHandlerTemporal
                             const char *str, round_style_t & rf) const override;
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2338,6 +2461,10 @@ class TypeHandlerChar: public TypeHandlerStr
                                              int *state) const override;
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2384,6 +2511,10 @@ class TypeHandlerVarchar: public TypeHandlerStr
   {
     return getNullValueForTypeVarcharText(attr);
   }
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2407,6 +2538,10 @@ class TypeHandlerVarbinary: public TypeHandlerStr
                      const SystemCatalog::TypeAttributesStd &attr) const override;
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2436,6 +2571,10 @@ class TypeHandlerBlob: public TypeHandlerStr
   }
   boost::any getNullValueForType(const SystemCatalog::TypeAttributesStd &attr)
                                                                 const override;
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2468,6 +2607,10 @@ class TypeHandlerText: public TypeHandlerStr
   {
     return getNullValueForTypeVarcharText(attr);
   }
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
@@ -2502,6 +2645,10 @@ class TypeHandlerClob: public TypeHandlerStr
   {
     return boost::any(); // QQ
   }
+  boost::any convertFromString(const SystemCatalog::TypeAttributesStd& colType,
+                               const ConvertFromStringParam& prm,
+                               const std::string& str,
+                               bool& pushWarning) const override;
 };
 
 
