@@ -2183,7 +2183,10 @@ void RowAggregation::doUDAF(const Row& rowIn, int64_t colIn, int64_t colOut,
                         if (LIKELY(fRowGroupIn.getColumnWidth(colIn)
                             == datatypes::MAXDECIMALWIDTH))
                         {
-                            datum.columnData = rowIn.getInt128Field(colIn);
+                            // We can't control boost::any asignment
+                            // so let's get an aligned memory
+                            datatypes::TSInt128 val = rowIn.getTSInt128Field(colIn);
+                            datum.columnData = val.s128Value;
                         }
                         else if (fRowGroupIn.getColumnWidth(colIn) <= datatypes::MAXLEGACYWIDTH)
                         {
@@ -2751,7 +2754,7 @@ void RowAggregationUM::calculateAvgColumns()
                 bool isWideDecimal =
                     datatypes::Decimal::isWideDecimalTypeByPrecision(precision);
 
-                if (LIKELY(!isWideDecimal))
+                if (!isWideDecimal)
                 {
                     long double sum = 0.0;
                     long double avg = 0.0;
