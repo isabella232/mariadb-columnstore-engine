@@ -766,8 +766,7 @@ inline void store(const NewColRequestHeader* in,
 
             default:
                 std::cout << __func__ << " WARNING!!! unspecified column width." << std::endl;
-                [[fallthrough]];
-                
+                // fall through 
             case 8:
                 ptr2 += (rid << 3);
                 memcpy(ptr1, ptr2, 8);
@@ -1840,7 +1839,7 @@ void PrimitiveProcessor::p_Col(NewColRequestHeader* in, NewColResultHeader* out,
 
         case 32:
             std::cout << __func__ << " WARNING!!! Not implemented for 32 byte data types." << std::endl;
-            [[fallthrough]];
+            // fall through 
 
         default:
             idbassert(0);

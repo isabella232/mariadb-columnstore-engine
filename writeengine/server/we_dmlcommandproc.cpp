@@ -3003,9 +3003,8 @@ uint8_t WE_DMLCommandProc::processUpdate(messageqcpp::ByteStream& bs,
 
                                 break;
                             }
-                            [[fallthrough]];
                         }
-                        /* fall through */
+                        // fall through
 
                         case CalpontSystemCatalog::BIGINT:
                         case CalpontSystemCatalog::UBIGINT:
@@ -3366,9 +3365,8 @@ uint8_t WE_DMLCommandProc::processUpdate(messageqcpp::ByteStream& bs,
 
                                     break;
                                 }
-                                [[fallthrough]];
                             }
-                            /* fall through */
+                            // fall through
 
                             case CalpontSystemCatalog::BIGINT:
                             case CalpontSystemCatalog::UBIGINT:
