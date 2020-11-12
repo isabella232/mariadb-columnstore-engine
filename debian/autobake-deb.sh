@@ -17,11 +17,6 @@ set -e
 # building the deb packages here.
 export DEB_BUILD_OPTIONS="nocheck $DEB_BUILD_OPTIONS"
 
-if [[ -d storage/columnstore/columnstore/debian ]]; then
-  cp -v storage/columnstore/columnstore/debian/mariadb-plugin-columnstore.* debian/
-  cat storage/columnstore/columnstore/debian/control >> debian/control
-fi
-
 # General CI optimizations to keep build output smaller
 if [[ $TRAVIS ]] || [[ $GITLAB_CI ]]
 then
@@ -33,6 +28,11 @@ then
   # both Travis-CI and Gitlab-CI
   sed 's|-DPLUGIN_COLUMNSTORE=YES|-DPLUGIN_COLUMNSTORE=NO|' -i debian/rules
   sed "/Package: mariadb-plugin-columnstore/,/^$/d" -i debian/control
+fi
+
+if [[ -d storage/columnstore/columnstore/debian ]]; then
+  cp -v storage/columnstore/columnstore/debian/mariadb-plugin-columnstore.* debian/
+  cat storage/columnstore/columnstore/debian/control >> debian/control
 fi
 
 # Don't build or try to put files in a package for selected plugins and compontents on Travis-CI

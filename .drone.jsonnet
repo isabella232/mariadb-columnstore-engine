@@ -308,11 +308,8 @@ local Pipeline(branch, platform, event) = {
                // "sed -i 's/BETA/GAMMA/' storage/columnstore/CMakeLists.txt",
                // Temprorary check for transition debian packaging files to columnstore engine repo (just list files which need transition)
                "rm -v debian/mariadb-plugin-columnstore.*",
-               // Unstrip columnstore while TRAVIS flag used (for speeding up builds)
-               "sed -i '/DPLUGIN_COLUMNSTORE/d;/Package: mariadb-plugin-columnstore/d' debian/autobake-deb.sh",
-
                platformMap(branch, platform),
-               if (pkg_format == 'rpm') then 'createrepo .' else 'dpkg-scanpackages ../ | gzip > ../Packages.gz ',
+               if (pkg_format == 'rpm') then 'createrepo .' else 'dpkg-scanpackages ../ | gzip > ../Packages.gz',
              ],
            },
            {
