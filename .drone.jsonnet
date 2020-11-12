@@ -287,6 +287,9 @@ local Pipeline(branch, platform, event) = {
              },
              commands: [
                'cd /mdb/' + builddir,
+
+               // Tweak debian packaging stuff
+               "cp storage/columnstore/columnstore/debian/autobake-deb.sh debian/",
                "sed -i -e '/-DBUILD_CONFIG=mysql_release/d' debian/rules",
                "sed -i -e '/Package: libmariadbd19/,/^$/d' debian/control",
                "sed -i -e '/Package: libmariadbd-dev/,/^$/d' debian/control",
@@ -297,19 +300,16 @@ local Pipeline(branch, platform, event) = {
                "sed -i -e '/Package: mariadb-plugin-xpand*/,/^$/d' debian/control",
                "sed -i -e '/wsrep/d' debian/mariadb-server-*.install",
                "sed -i -e 's/Depends: galera.*/Depends:/' debian/control",
+               // Disable galera
                "sed -i -e 's/\"galera-enterprise-4\"//' cmake/cpack_rpm.cmake",
-               "sed -i '/(mariadb|mysql)-test/d' debian/autobake-deb.sh",
-               "sed -i '/-test/d' debian/autobake-deb.sh",
-               // change plugin_maturity level
+               // Leave test package for mtr
+               "sed -i '/(mariadb|mysql)-test/d;/-test/d' debian/autobake-deb.sh",
+               // Change plugin_maturity level
                // "sed -i 's/BETA/GAMMA/' storage/columnstore/CMakeLists.txt",
-               // remove a file from deb packaging
-               // "sed -i '/mcs-start-storagemanager.py/d' debian/mariadb-plugin-columnstore.install",
-               // "sed -i '/x-columnstore.cnf/d' debian/mariadb-plugin-columnstore.install",
-
-               // Temprorary hack for transition debian packaging files to columnstore engine repo
+               // Temprorary check for transition debian packaging files to columnstore engine repo (just list files which need transition)
                "rm -v debian/mariadb-plugin-columnstore.*",
-               "cp -v storage/columnstore/columnstore/debian/mariadb-plugin-columnstore.* debian/",
-               "cat storage/columnstore/columnstore/debian/control >> debian/control",
+               // Unstrip columnstore while TRAVIS flag used (for speeding up builds)
+               "sed -i '/DPLUGIN_COLUMNSTORE/d;/Package: mariadb-plugin-columnstore/d' debian/autobake-deb.sh",
 
                platformMap(branch, platform),
                if (pkg_format == 'rpm') then 'createrepo .' else 'dpkg-scanpackages ../ | gzip > ../Packages.gz ',
