@@ -29,11 +29,12 @@ then
   sed 's|-DPLUGIN_COLUMNSTORE=YES|-DPLUGIN_COLUMNSTORE=NO|' -i debian/rules
   sed "/Package: mariadb-plugin-columnstore/,/^$/d" -i debian/control
 fi
-
+cat debian/control
 if [[ -d storage/columnstore/columnstore/debian ]]; then
   cp -v storage/columnstore/columnstore/debian/mariadb-plugin-columnstore.* debian/
   cat storage/columnstore/columnstore/debian/control >> debian/control
 fi
+cat debian/control
 
 # Don't build or try to put files in a package for selected plugins and compontents on Travis-CI
 # in order to keep build small (in both duration and disk space)
